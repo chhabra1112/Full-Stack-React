@@ -1,37 +1,56 @@
 import React from 'react';
 import { Card, CardImg, CardImgOverlay, CardTitle } from 'reactstrap';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
+import {baseUrl} from '../shared/baseUrl';
 
-function RenderMenuItem({ dish}) {
+function RenderMenuItem({ dish }) {
     return (
         <Card>
             <Link to={`/menu/${dish.id}`} >
-            <CardImg width="100%" src={dish.image} alt={dish.name} />
-            <CardImgOverlay>
-                <CardTitle>
-                    {dish.name}
-                </CardTitle>
-            </CardImgOverlay>
+                <CardImg width="100%" src={baseUrl+dish.image} alt={dish.name} />
+                <CardImgOverlay>
+                    <CardTitle>
+                        {dish.name}
+                    </CardTitle>
+                </CardImgOverlay>
             </Link>
         </Card>
     );
 }
 
 const Menu = (props) => {
-
-    const menu = props.dishes.map((dish) => {
+    console.log('Menu Component constructed now');
+    if (props.dishes.isLoading) {
         return (
-            <div key={dish.id} className="col-12 col-md-5 m-1">
-                <RenderMenuItem dish={dish} onClick = {props.onClick}/>
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
             </div>
         );
-    });
-    console.log('Menu Component constructed now');
-    return (
-        <div className="row">
-            {menu}
-        </div>
-    );
+    } else if (props.dishes.errMess) {
+        return (<div className="container">
+            <div className="row">
+                <h4>{props.dishes.errMess}</h4>
+            </div>
+        </div>);
+    } else {
+        const menu = props.dishes.dishes.map((dish) => {
+            return (
+                <div key={dish.id} className="col-12 col-md-5 m-1">
+                    <RenderMenuItem dish={dish} onClick={props.onClick} />
+                </div>
+            );
+        });
+        return (
+            <div className="container">
+            <div className="row">
+                {menu}
+            </div>
+            </div>
+        );
+    }
 }
 
 
